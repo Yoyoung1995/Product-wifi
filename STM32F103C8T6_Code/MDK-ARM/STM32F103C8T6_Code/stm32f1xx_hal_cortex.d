@@ -22,6 +22,7 @@ stm32f103c8t6_code\stm32f1xx_hal_cortex.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/s
 stm32f103c8t6_code\stm32f1xx_hal_cortex.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_cortex.h
 stm32f103c8t6_code\stm32f1xx_hal_cortex.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h
 stm32f103c8t6_code\stm32f1xx_hal_cortex.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h
+stm32f103c8t6_code\stm32f1xx_hal_cortex.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h
 stm32f103c8t6_code\stm32f1xx_hal_cortex.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h
 stm32f103c8t6_code\stm32f1xx_hal_cortex.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h
 stm32f103c8t6_code\stm32f1xx_hal_cortex.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h

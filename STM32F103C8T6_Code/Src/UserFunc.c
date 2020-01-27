@@ -9,6 +9,9 @@
 void ReadEEPROM(void);
 void RecordInEEPROM(void);
 
+extern I2C_HandleTypeDef hi2c1;
+uint8_t AGS01DB_Calc_CRC8(uint8_t *data, uint8_t Num);
+
 
 //--------------------------------  Wifi硬件设备配置任务 函数仓库
 SSS DeviceSet={0};	//用户配置参数
@@ -227,6 +230,9 @@ void Refresh_Set(void)
 //------------------------------------ 各类传感器数据获取 任务 ----------------------------
 DDD SensorData={0};
 
+uint8_t IIC_WriteBuf[64]={0};
+uint8_t IIC_ReadBuf[64]={0};
+
 void Get_AHT15_Data(void)
 {
 	;
@@ -234,7 +240,42 @@ void Get_AHT15_Data(void)
 
 void Get_AGS01DB_Data(void)
 {
-	;
+	uint8_t buf=0;
+	
+	IIC_WriteBuf[0]=0x00;
+	IIC_WriteBuf[1]=0x02;
+	vTaskSuspendAll(); //关调度
+	HAL_I2C_Master_Transmit(&hi2c1,ADDR_AGS01DB_Write,&IIC_WriteBuf[0],2,0x10);
+	xTaskResumeAll ();//开调度
+	
+	osDelay(5);	//STM32F1 硬件IIC Bug 修复
+	
+	vTaskSuspendAll(); //关调度
+	HAL_I2C_Master_Receive(&hi2c1,ADDR_AGS01DB_Read,&IIC_ReadBuf[0],3,0x10);
+	xTaskResumeAll ();//开调度
+	//数据处理
+	buf = AGS01DB_Calc_CRC8(&IIC_ReadBuf[0],2);
+	if( IIC_ReadBuf[2]==buf )	//CRC校验
+	{
+		SensorData.VOC = IIC_ReadBuf[0];
+		SensorData.VOC <<= 8;
+		SensorData.VOC += IIC_ReadBuf[1];
+		//VOC气体浓度 = SensorData.VOC * 0.1 PPM
+	}
+	
 }
 
-
+uint8_t AGS01DB_Calc_CRC8(uint8_t *data, uint8_t Num)
+{
+	uint8_t bit,byte,crc=0xFF;
+	for(byte=0; byte<Num; byte++)
+	{
+		crc^=(data[byte]);
+		for(bit=8;bit>0;--bit)
+		{
+			if(crc&0x80) crc=(crc<<1)^0x31;
+			else crc=(crc<<1);
+		}
+	}
+	return crc;
+}

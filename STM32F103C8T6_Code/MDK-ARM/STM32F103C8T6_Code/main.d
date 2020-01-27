@@ -22,6 +22,7 @@ stm32f103c8t6_code\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma
 stm32f103c8t6_code\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_cortex.h
 stm32f103c8t6_code\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h
 stm32f103c8t6_code\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h
+stm32f103c8t6_code\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h
 stm32f103c8t6_code\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h
 stm32f103c8t6_code\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h
 stm32f103c8t6_code\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
@@ -42,5 +43,6 @@ stm32f103c8t6_code\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/qu
 stm32f103c8t6_code\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 stm32f103c8t6_code\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
 stm32f103c8t6_code\main.o: ../Inc/dma.h
+stm32f103c8t6_code\main.o: ../Inc/i2c.h
 stm32f103c8t6_code\main.o: ../Inc/usart.h
 stm32f103c8t6_code\main.o: ../Inc/gpio.h

@@ -30,6 +30,9 @@ extern void ReadEEPROM(void);    //将Device 存储在Flash中的数据读出
 extern void Refresh_Set(void);
 
 //------------------------------------ 各类传感器数据获取 -----------------------------------
+#define ADDR_AGS01DB_Write 0x44
+#define ADDR_AGS01DB_Read  0x45
+
 typedef struct
 {
 	uint16_t Temperature;
