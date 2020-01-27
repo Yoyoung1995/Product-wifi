@@ -54,6 +54,8 @@
 /* USER CODE BEGIN Includes */     
 #include "usart.h"
 #include <string.h>
+#include "UserFunc.h"
+#include "stm32f1xx_hal.h"
 /* USER CODE END Includes */
 
 /* Variables -----------------------------------------------------------------*/
@@ -188,10 +190,19 @@ void Func_ReportData(void const * argument)
 void Func_DeviceSetting(void const * argument)
 {
   /* USER CODE BEGIN Func_DeviceSetting */
+	osSemaphoreWait(BinarySem_Task_DeviceSettingHandle,osWaitForever);// 先清空信号量，信号量创建(cubemx)生成时为满
+	
+	ReadEEPROM();
+	if(DeviceSet.FirstTimeSet_Or_Not == 0x55)
+		Init_SecondTime();
+	else
+		Init_FirstTime();
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+		osSemaphoreWait(BinarySem_Task_DeviceSettingHandle,osWaitForever);
+		Refresh_Set();
+    osDelay(1000);
   }
   /* USER CODE END Func_DeviceSetting */
 }
@@ -212,13 +223,61 @@ void Func_NetworkLink(void const * argument)
 void Func_RXProductProtocolAnalyse(void const * argument)
 {
   /* USER CODE BEGIN Func_RXProductProtocolAnalyse */
+	osDelay(1);
+	osSemaphoreWait(BinarySem_Task_RXProductProtocolAnalyseHandle,osWaitForever);  //先清空信号量，刚创建时为满
   /* Infinite loop */
   for(;;)
   {
 		osSemaphoreWait(BinarySem_Task_RXProductProtocolAnalyseHandle,osWaitForever);
-//		snprintf((char *)UsartTx,sizeof(UsartTx),"今天是%s",UsartType.RX_pData );
-//		HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,strlen((char *)UsartTx)+1 );
-		//
+		//1.解析RX数据，并刷新缓存
+		if( (UsartType.RX_pData[0]==0xA5) && (UsartType.RX_pData[1]==0x5A) )
+		{
+			switch( UsartType.RX_pData[3])
+			{
+				case 0x03:{
+											switch(UsartType.RX_pData[4])	//子判定字节
+											{
+												case 0x01: strncpy((char *)&DeviceSet.Name[0],(char *)&UsartType.RX_pData[5],strlen((char *)&UsartType.RX_pData[5])+1 );
+																		break;
+												case 0x02: strncpy((char *)&DeviceSet.IP[0],(char *)&UsartType.RX_pData[5],strlen((char *)&UsartType.RX_pData[5])+1 );
+																		break;
+												case 0x03: DeviceSet.Port = *(uint16_t *)(&UsartType.RX_pData[5]);		//stm32是小端模式 其它端发过来时要注意
+																		break;
+												case 0x04: strncpy((char *)&DeviceSet.C_Name[0],(char *)&UsartType.RX_pData[5],strlen((char *)&UsartType.RX_pData[5])+1 );
+																		break;
+												case 0x05: strncpy((char *)&DeviceSet.C_Key[0],(char *)&UsartType.RX_pData[5],strlen((char *)&UsartType.RX_pData[5])+1 );
+																		break;
+												case 0x06: DeviceSet.Mode = UsartType.RX_pData[5];
+																		break;
+												case 0x07: DeviceSet.T = *(uint16_t *)(&UsartType.RX_pData[5]);		//stm32是小端模式 其它端发过来时要注意
+																		break;
+												case 0x08: DeviceSet.AHT15_EN = UsartType.RX_pData[5];
+																		break;
+												case 0x09: DeviceSet.VOC_EN = UsartType.RX_pData[5];
+																		break;
+												case 0x0a: DeviceSet.PM2_5_EN = UsartType.RX_pData[5];
+																		break;
+												case 0x0b: DeviceSet.Light_EN = UsartType.RX_pData[5];
+																		break;
+												case 0x0c: DeviceSet.Noice_EN = UsartType.RX_pData[5];
+																		break;
+												case 0x0d: {
+																		DeviceSet.Refresh_Set_Control = UsartType.RX_pData[5];
+																		if( DeviceSet.Refresh_Set_Control == 1)
+																			{ DeviceSet.Refresh_Set_Control = 2; 
+																				osSemaphoreRelease(BinarySem_Task_DeviceSettingHandle); } 
+																				
+																	 }
+												default:   break;
+											}
+											
+									}
+									break;
+				default:
+									break;
+			}
+		}
+
     osDelay(1);
   }
   /* USER CODE END Func_RXProductProtocolAnalyse */

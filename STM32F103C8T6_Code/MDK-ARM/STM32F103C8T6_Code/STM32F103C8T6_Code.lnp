@@ -8,6 +8,7 @@
 "stm32f103c8t6_code\stm32f1xx_it.o"
 "stm32f103c8t6_code\stm32f1xx_hal_msp.o"
 "stm32f103c8t6_code\stm32f1xx_hal_timebase_tim.o"
+"stm32f103c8t6_code\userfunc.o"
 "stm32f103c8t6_code\stm32f1xx_hal_gpio_ex.o"
 "stm32f103c8t6_code\stm32f1xx_hal_tim.o"
 "stm32f103c8t6_code\stm32f1xx_hal_tim_ex.o"

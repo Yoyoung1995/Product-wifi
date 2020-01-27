@@ -429,6 +429,11 @@
               <FileType>1</FileType>
               <FilePath>../Src/stm32f1xx_hal_timebase_TIM.c</FilePath>
             </File>
+            <File>
+              <FileName>UserFunc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\UserFunc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
