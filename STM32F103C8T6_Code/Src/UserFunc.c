@@ -141,7 +141,7 @@ void Flash_Read(uint16_t * dest,uint8_t len, uint32_t Add )
 }
 
 //录入EEPROM   从Flash 48K处开始 0x0800 C000  
-void RecordInEEPROM()
+void RecordInEEPROM(void)
 {
 	uint8_t buf[SSS_Len]={0};
 	
@@ -152,7 +152,7 @@ void RecordInEEPROM()
 }
 
 //提取EEPROM  Flash_Add处地址的FLash
-void ReadEEPROM()
+void ReadEEPROM(void)
 {
 	uint8_t buf[SSS_Len+10]={0}; //预留点空间
 	
@@ -163,7 +163,7 @@ void ReadEEPROM()
 }
 
 //刷新wifi配置 并 配置参数录入Flash
-void Refresh_Set()
+void Refresh_Set(void)
 {
 		DeviceSet.FirstTimeSet_Or_Not = 0x55;
 	
@@ -223,3 +223,18 @@ void Refresh_Set()
 
 //--------------------------------  Wifi网络连接任务
 //(删去--保留不用)
+
+//------------------------------------ 各类传感器数据获取 任务 ----------------------------
+DDD SensorData={0};
+
+void Get_AHT15_Data(void)
+{
+	;
+}
+
+void Get_AGS01DB_Data(void)
+{
+	;
+}
+
+

@@ -28,3 +28,21 @@ extern void Init_FirstTime(void);
 extern void Init_SecondTime(void);
 extern void ReadEEPROM(void);    //将Device 存储在Flash中的数据读出
 extern void Refresh_Set(void);
+
+//------------------------------------ 各类传感器数据获取 -----------------------------------
+typedef struct
+{
+	uint16_t Temperature;
+	uint16_t Wet;
+	uint16_t VOC;
+	uint16_t PM2_5;
+	uint16_t PM10;
+	uint16_t Light;
+	uint16_t Noice;
+}DDD;
+
+extern DDD SensorData;
+
+extern void Get_AHT15_Data(void);
+
+extern void Get_AGS01DB_Data(void);
