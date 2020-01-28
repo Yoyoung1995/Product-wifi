@@ -245,13 +245,11 @@ void Get_AGS01DB_Data(void)
 	IIC_WriteBuf[0]=0x00;
 	IIC_WriteBuf[1]=0x02;
 	vTaskSuspendAll(); //关调度
-	HAL_I2C_Master_Transmit(&hi2c1,ADDR_AGS01DB_Write,&IIC_WriteBuf[0],2,0x10);
-	xTaskResumeAll ();//开调度
+	HAL_I2C_Master_Transmit(&hi2c1,ADDR_AGS01DB_Write,&IIC_WriteBuf[0],2,0x100);
+
+	HAL_Delay(5);	//STM32F1 硬件IIC Bug 修复
 	
-	osDelay(5);	//STM32F1 硬件IIC Bug 修复
-	
-	vTaskSuspendAll(); //关调度
-	HAL_I2C_Master_Receive(&hi2c1,ADDR_AGS01DB_Read,&IIC_ReadBuf[0],3,0x10);
+	HAL_I2C_Master_Receive(&hi2c1,ADDR_AGS01DB_Read,&IIC_ReadBuf[0],3,0x100);
 	xTaskResumeAll ();//开调度
 	//数据处理
 	buf = AGS01DB_Calc_CRC8(&IIC_ReadBuf[0],2);

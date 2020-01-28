@@ -169,7 +169,8 @@ void Func_GetSensorsData(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+		Get_AGS01DB_Data( );
+    osDelay(5000);
   }
   /* USER CODE END Func_GetSensorsData */
 }
@@ -287,7 +288,7 @@ void Func_RXProductProtocolAnalyse(void const * argument)
 void myTimer1s_Callback(void const * argument)
 {
   /* USER CODE BEGIN myTimer1s_Callback */
-  
+  ;
   /* USER CODE END myTimer1s_Callback */
 }
 

@@ -193,17 +193,12 @@
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Robot_Num_Flash_Add</ItemText>
+          <ItemText>SensorData</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>len</ItemText>
-        </Ww>
-        <Ww>
-          <count>4</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>i</ItemText>
+          <ItemText>IIC_WriteBuf</ItemText>
         </Ww>
       </WatchWindow1>
       <MemoryWindow1>
