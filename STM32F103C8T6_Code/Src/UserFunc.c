@@ -233,10 +233,49 @@ DDD SensorData={0};
 uint8_t IIC_WriteBuf[64]={0};
 uint8_t IIC_ReadBuf[64]={0};
 
+void AHT15_Reset(void)
+{
+	IIC_WriteBuf[0] = 0xBA;
+	vTaskSuspendAll(); //关调度
+	HAL_I2C_Master_Transmit(&hi2c1,ADDR_AHT15_Write,&IIC_WriteBuf[0],1,0x100);
+	xTaskResumeAll ();//开调度
+	osDelay(20);	//软件复位时间
+}
+
 void Get_AHT15_Data(void)
 {
-	;
+	uint32_t Wet_buf = 0;		//湿度数据
+	uint32_t Temperature_buf = 0;		//温度数据
+	
+	//触发测量数据
+	IIC_WriteBuf[0] = 0xAC;
+	IIC_WriteBuf[1] = 0x33;
+	IIC_WriteBuf[2] = 0x00;
+	vTaskSuspendAll(); //关调度
+	HAL_I2C_Master_Transmit(&hi2c1,ADDR_AHT15_Write,&IIC_WriteBuf[0],3,0x100);
+	xTaskResumeAll ();//开调度
+	
+	osDelay(100);  //75ms以上
+	
+	vTaskSuspendAll(); //关调度
+	HAL_I2C_Master_Receive(&hi2c1,ADDR_AHT15_Read,&IIC_ReadBuf[0],6,0x100);
+	xTaskResumeAll ();//开调度
+	//数据处理(无CRC校验)
+	Wet_buf = IIC_ReadBuf[1];
+	Wet_buf <<= 8;
+	Wet_buf += IIC_ReadBuf[2];
+	Wet_buf <<= 4;
+	Wet_buf |= (IIC_ReadBuf[3]/16);
+	SensorData.Wet = (Wet_buf*1000)/1048576;
+	
+	Temperature_buf |= (IIC_ReadBuf[3]%16);
+	Temperature_buf <<= 8;
+	Temperature_buf += IIC_ReadBuf[4];
+	Temperature_buf <<= 8;
+	Temperature_buf += IIC_ReadBuf[5];
+	SensorData.Temperature = ((Temperature_buf*2000)/1048576)-500;
 }
+
 
 void Get_AGS01DB_Data(void)
 {
@@ -246,9 +285,11 @@ void Get_AGS01DB_Data(void)
 	IIC_WriteBuf[1]=0x02;
 	vTaskSuspendAll(); //关调度
 	HAL_I2C_Master_Transmit(&hi2c1,ADDR_AGS01DB_Write,&IIC_WriteBuf[0],2,0x100);
-
-	HAL_Delay(5);	//STM32F1 硬件IIC Bug 修复
+	xTaskResumeAll ();//开调度
 	
+	osDelay(5);	//STM32F1 硬件IIC Bug 修复
+	
+	vTaskSuspendAll(); //关调度
 	HAL_I2C_Master_Receive(&hi2c1,ADDR_AGS01DB_Read,&IIC_ReadBuf[0],3,0x100);
 	xTaskResumeAll ();//开调度
 	//数据处理
@@ -277,3 +318,16 @@ uint8_t AGS01DB_Calc_CRC8(uint8_t *data, uint8_t Num)
 	}
 	return crc;
 }
+
+//-------------------------------  定期自动上传传感器数据 + 定期检测任务 ----------------------
+void SendSensorData(void)
+{
+	;
+}
+
+
+void Check(void)
+{
+	;
+}
+

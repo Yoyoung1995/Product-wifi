@@ -71,7 +71,7 @@ osSemaphoreId BinarySem_Task_NetworkLinkHandle;
 osSemaphoreId BinarySem_Task_RXProductProtocolAnalyseHandle;
 
 /* USER CODE BEGIN Variables */
-
+uint16_t softTimerCount = 0;    //RTOS软件定时器  单位：秒
 /* USER CODE END Variables */
 
 /* Function prototypes -------------------------------------------------------*/
@@ -129,6 +129,7 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
+	osTimerStart(myTimer1sHandle,1000);
   /* USER CODE END RTOS_TIMERS */
 
   /* Create the thread(s) */
@@ -166,11 +167,13 @@ void Func_GetSensorsData(void const * argument)
 {
 
   /* USER CODE BEGIN Func_GetSensorsData */
+	AHT15_Reset();
   /* Infinite loop */
   for(;;)
   {
-		Get_AGS01DB_Data( );
-    osDelay(5000);
+		Get_AHT15_Data(); 		//获取温湿度
+		Get_AGS01DB_Data();		//获取VOC
+    osDelay(2000);				//AGS01DB传感器采样周期最长  为>=2S
   }
   /* USER CODE END Func_GetSensorsData */
 }
@@ -179,9 +182,15 @@ void Func_GetSensorsData(void const * argument)
 void Func_ReportData(void const * argument)
 {
   /* USER CODE BEGIN Func_ReportData */
+	osDelay(1);
+	osSemaphoreWait(BinarySem_Task_ReportDataHandle,osWaitForever);// 先清空信号量，信号量创建(cubemx)生成时为满	
   /* Infinite loop */
   for(;;)
   {
+		osSemaphoreWait(BinarySem_Task_ReportDataHandle,osWaitForever);
+		//检测TCP远程服务器链接情况 （缺）
+		//上报数据(缺)
+		
     osDelay(1);
   }
   /* USER CODE END Func_ReportData */
@@ -191,6 +200,7 @@ void Func_ReportData(void const * argument)
 void Func_DeviceSetting(void const * argument)
 {
   /* USER CODE BEGIN Func_DeviceSetting */
+	osDelay(1);
 	osSemaphoreWait(BinarySem_Task_DeviceSettingHandle,osWaitForever);// 先清空信号量，信号量创建(cubemx)生成时为满
 	
 	ReadEEPROM();
@@ -203,7 +213,7 @@ void Func_DeviceSetting(void const * argument)
   {
 		osSemaphoreWait(BinarySem_Task_DeviceSettingHandle,osWaitForever);
 		Refresh_Set();
-    osDelay(1000);
+    osDelay(100);
   }
   /* USER CODE END Func_DeviceSetting */
 }
@@ -288,7 +298,12 @@ void Func_RXProductProtocolAnalyse(void const * argument)
 void myTimer1s_Callback(void const * argument)
 {
   /* USER CODE BEGIN myTimer1s_Callback */
-  ;
+  softTimerCount++;
+	if( softTimerCount == DeviceSet.T )
+	{
+		softTimerCount = 0;
+		osSemaphoreRelease(BinarySem_Task_ReportDataHandle);
+	}
   /* USER CODE END myTimer1s_Callback */
 }
 

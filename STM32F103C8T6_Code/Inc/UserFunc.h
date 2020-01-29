@@ -32,6 +32,8 @@ extern void Refresh_Set(void);
 //------------------------------------ 各类传感器数据获取 -----------------------------------
 #define ADDR_AGS01DB_Write 0x22
 #define ADDR_AGS01DB_Read  0x23
+#define ADDR_AHT15_Write   0x70
+#define ADDR_AHT15_Read    0x71
 
 typedef struct
 {
@@ -46,6 +48,7 @@ typedef struct
 
 extern DDD SensorData;
 
+extern void AHT15_Reset(void);
 extern void Get_AHT15_Data(void);
 
 extern void Get_AGS01DB_Data(void);
