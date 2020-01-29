@@ -171,8 +171,17 @@ void Func_GetSensorsData(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-		Get_AHT15_Data(); 		//获取温湿度
-		Get_AGS01DB_Data();		//获取VOC
+		if( DeviceSet.AHT15_EN == 1)
+			Get_AHT15_Data(); 		//获取温湿度
+		if( DeviceSet.VOC_EN ==1 )
+			Get_AGS01DB_Data();		//获取VOC
+		if(	DeviceSet.PM2_5_EN == 1 )
+			;
+		if( DeviceSet.Light_EN == 1 )
+			;
+		if( DeviceSet.Noice_EN == 1 )
+			;
+		
     osDelay(2000);				//AGS01DB传感器采样周期最长  为>=2S
   }
   /* USER CODE END Func_GetSensorsData */
@@ -188,8 +197,15 @@ void Func_ReportData(void const * argument)
   for(;;)
   {
 		osSemaphoreWait(BinarySem_Task_ReportDataHandle,osWaitForever);
+		if( DeviceSet.Mode == 1 )	 //启用自动上报数据
+		{
 		//检测TCP远程服务器链接情况 （缺）
 		//上报数据(缺)
+		}
+		else if( DeviceSet.Mode == 2 ) //禁用自动上报数据
+		{
+			;	//无
+		}
 		
     osDelay(1);
   }
