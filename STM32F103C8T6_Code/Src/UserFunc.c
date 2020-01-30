@@ -33,6 +33,7 @@ void Init_FirstTime(void)
 		DeviceSet.Light_EN =2;
 		DeviceSet.Noice_EN =2;
 		DeviceSet.Refresh_Set_Control =2;
+		DeviceSet.NetWork_Status = 2;
 		RecordInEEPROM();
 		
 	

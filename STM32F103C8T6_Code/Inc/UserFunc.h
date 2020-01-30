@@ -16,6 +16,7 @@ typedef struct
 	uint8_t Light_EN;		//待定
 	uint8_t Noice_EN;		//待定
 	uint8_t Refresh_Set_Control;  // wifi刷新配置统一控制按钮
+	uint8_t NetWork_Status;
 	
 	uint8_t FirstTimeSet_Or_Not;  // 值=0x55时代表非首次配置
 }SSS;

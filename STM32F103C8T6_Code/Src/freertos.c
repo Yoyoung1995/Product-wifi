@@ -54,6 +54,7 @@
 /* USER CODE BEGIN Includes */     
 #include "usart.h"
 #include <string.h>
+#include <stdlib.h>
 #include "UserFunc.h"
 #include "stm32f1xx_hal.h"
 /* USER CODE END Includes */
@@ -191,22 +192,55 @@ void Func_GetSensorsData(void const * argument)
 void Func_ReportData(void const * argument)
 {
   /* USER CODE BEGIN Func_ReportData */
+	void * p = NULL;
+	void * p2 = NULL;
+	char buf[10]={0};		//itoa buf
+	
 	osDelay(1);
-	osSemaphoreWait(BinarySem_Task_ReportDataHandle,osWaitForever);// 先清空信号量，信号量创建(cubemx)生成时为满	
+	osSemaphoreWait(BinarySem_Task_ReportDataHandle,osWaitForever);// 先清空信号量，信号量创建(cubemx)生成时为满	 虽然该信号量可能不会用到
   /* Infinite loop */
   for(;;)
   {
-		osSemaphoreWait(BinarySem_Task_ReportDataHandle,osWaitForever);
-		if( DeviceSet.Mode == 1 )	 //启用自动上报数据
+//		osSemaphoreWait(BinarySem_Task_ReportDataHandle,osWaitForever);
+
+		//定期检测TCP远程服务器链接情况 
+		if( softTimerCount%(10*DeviceSet.T) == 0 )
 		{
-		//检测TCP远程服务器链接情况 （缺）
-		//上报数据(缺)
+			snprintf((char *)UsartTx,sizeof(UsartTx),"AT+CIPSTATUS\r\n" );
+			HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,strlen((char *)UsartTx) );	
+			osDelay(10);
+			p = strstr((char *)&UsartType.RX_pData[0],"\"TCP\"");		// p+7 : IP地址首字节地址
+			p2 = strchr(p+7,',');			// p2+1 : IP端口字符串首字节地址	
+			snprintf(buf,10,"%d",DeviceSet.Port);	 //itoa	
+			if( ( p == NULL ) || (0!= strncmp(p+7,(char *)DeviceSet.IP,strlen((char *)DeviceSet.IP))) || (0!= strncmp(p2+1,buf,strlen(buf)) )	)  //未连接上
+			{
+				//远程服务器链接状态 刷新
+				DeviceSet.NetWork_Status = 2;
+				//连接TCP远程服务器
+				snprintf((char *)UsartTx,sizeof(UsartTx),"AT+CIPSTART=2,\"TCP\",\"%s\",%hd\r\n",DeviceSet.IP,DeviceSet.Port );
+				HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,strlen((char *)UsartTx) );	
+				osDelay(5000);	
+			}
 		}
-		else if( DeviceSet.Mode == 2 ) //禁用自动上报数据
+				
+		//定期自动上报数据(缺)  数据帧形式
+		if(  softTimerCount%DeviceSet.T == 0 )
 		{
-			;	//无
+			if( (DeviceSet.Mode == 1)&&(DeviceSet.NetWork_Status == 1) )	 //网络连接正常 且开启自动上报
+			{
+				snprintf((char *)UsartTx,sizeof(UsartTx),"AT+CIPSEND=2,%d\r\n",sizeof(DDD)+4 );
+				HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,strlen((char *)UsartTx) );	
+				osDelay(10);	//延时多久未确定
+				UsartTx[0] = 0xA5;
+				UsartTx[1] = 0x5A;
+				UsartTx[2] = sizeof(DDD)+1;
+				UsartTx[3] = 0x02;
+				memcpy( &UsartTx[4],(uint8_t *)&SensorData,sizeof(DDD) );
+				HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,sizeof(DDD)+4 );	
+				//远程服务器端接收到数据帧，解析, 再将该数据转换成DDD结构体，方可读出数据
+				;
+			}
 		}
-		
     osDelay(1);
   }
   /* USER CODE END Func_ReportData */
@@ -315,11 +349,11 @@ void myTimer1s_Callback(void const * argument)
 {
   /* USER CODE BEGIN myTimer1s_Callback */
   softTimerCount++;
-	if( softTimerCount == DeviceSet.T )
-	{
-		softTimerCount = 0;
-		osSemaphoreRelease(BinarySem_Task_ReportDataHandle);
-	}
+//	if( softTimerCount == DeviceSet.T )
+//	{
+//		softTimerCount = 0;
+//		osSemaphoreRelease(BinarySem_Task_ReportDataHandle);
+//	}
   /* USER CODE END myTimer1s_Callback */
 }
 
