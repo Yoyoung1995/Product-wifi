@@ -23,6 +23,7 @@ typedef struct
 
 extern SSS DeviceSet;	
 #define SSS_Len sizeof(SSS)
+#define DDD_Len sizeof(DDD)
 #define Flash_Add  0x0800C000 
 
 extern void Init_FirstTime(void);

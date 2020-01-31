@@ -57,7 +57,7 @@ void Init_FirstTime(void)
 		HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,strlen((char *)UsartTx) );
 		osDelay(2000);
 		//4.设置AP下的静态IP
-		snprintf((char *)UsartTx,sizeof(UsartTx),"AT+CIPAP=\"192.168.1.1\",\"192.168.1.1\",\"255.255.255.0\"\r\n" );
+		snprintf((char *)UsartTx,sizeof(UsartTx),"AT+CIPAP=\"10.66.66.66\",\"10.66.66.66\",\"255.0.0.0\"\r\n" );
 		HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,strlen((char *)UsartTx) );	
 		osDelay(2000);		//延时未确定
 		//5.开启多连接模式
@@ -81,7 +81,7 @@ void Init_SecondTime(void)
 		//0.重启模块   不含字符串结束符
 		snprintf((char *)UsartTx,sizeof(UsartTx),"AT+RST\r\n" );
 		HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,strlen((char *)UsartTx) );
-		osDelay(2000);		
+		osDelay(2000);					
 		//1.开启多连接模式
 		snprintf((char *)UsartTx,sizeof(UsartTx),"AT+CIPMUX=1\r\n" );
 		HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,strlen((char *)UsartTx) );
@@ -93,7 +93,7 @@ void Init_SecondTime(void)
 		//3.设置服务器超时时间
 		snprintf((char *)UsartTx,sizeof(UsartTx),"AT+CIPSTO=3600\r\n" );
 		HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,strlen((char *)UsartTx) );	
-		osDelay(2000);		//延时未确定	
+		osDelay(1000);		//延时未确定	
 		//提取EEPROM - 用户配置参数 提取至DeviceSet
 		//ReadEEPROM();  前面初始化时已提取过一次，无需再次提取
 		//4.建立TCP连接
@@ -184,44 +184,15 @@ void Refresh_Set(void)
 		snprintf((char *)UsartTx,sizeof(UsartTx),"AT+CWJAP=\"%s\",\"%s\"\r\n",DeviceSet.C_Name,DeviceSet.C_Key );
 		HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,strlen((char *)UsartTx) );	
 		osDelay(18000);	
-				//暂缺 确认是否真正接上
 		//TCP/IP网络连接
 		snprintf((char *)UsartTx,sizeof(UsartTx),"AT+CIPSTART=2,\"TCP\",\"%s\",%hd\r\n",DeviceSet.IP,DeviceSet.Port );
 		HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,strlen((char *)UsartTx) );	
 		osDelay(5000);	
 	
-		//检查连接状态并反馈
-		snprintf((char *)UsartTx,sizeof(UsartTx),"AT+CIPSTATUS\r\n" );
-		HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,strlen((char *)UsartTx) );	
-		osDelay(200);
-		//!!!!不能这么判断TCP连接是否成功
-		if( ( UsartType.RX_pData[UsartType.RX_Size-2]=='O' ) && ( UsartType.RX_pData[UsartType.RX_Size-1]=='K' ) ) //连接成功
-		{
-			//反馈手机
-			snprintf((char *)UsartTx,sizeof(UsartTx),"AT+CIPSEND=0,7\r\n" );  // "ok"3字节+数据帧结构4字节
-			HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,strlen((char *)UsartTx) );	
-			osDelay(100);
-			UsartTx[0] = 0xA5;
-			UsartTx[1] = 0x5A;
-			UsartTx[2] = 4;
-			UsartTx[3] = 0x04;
-			strncpy((char *)&UsartTx[4],"ok",3 );
-			HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,strlen((char *)UsartTx)+1 ); //发送字符串，含字符串结束符
-		}
-		else
-		{
-			//反馈手机
-			snprintf((char *)UsartTx,sizeof(UsartTx),"AT+CIPSEND=0,10\r\n" );  // "false"6字节+数据帧结构4字节
-			HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,strlen((char *)UsartTx) );	
-			osDelay(100);
-			UsartTx[0] = 0xA5;
-			UsartTx[1] = 0x5A;
-			UsartTx[2] = 4;
-			UsartTx[3] = 0x04;
-			strncpy((char *)&UsartTx[4],"false",6 );
-			HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,strlen((char *)UsartTx)+1 ); //发送字符串，含字符串结束符		
-		}
-		;
+		/*检查连接状态并反馈 —— 免去，有定期的检测
+		反馈手机策略 —— 定期检测网络连接状态 + 定期上报 设备配置相关数据(其中包含与远程服务器的连接状态)
+		手机可以从服务器后端获知 设备配置相关数据，进而判断 设备是否连上远程服务器，并在手机端给出用户提示
+		*/
 }
 
 
