@@ -39,6 +39,7 @@ stm32f103c8t6_code\freertos.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal
 stm32f103c8t6_code\freertos.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h
 stm32f103c8t6_code\freertos.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h
 stm32f103c8t6_code\freertos.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h
+stm32f103c8t6_code\freertos.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_iwdg.h
 stm32f103c8t6_code\freertos.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h
 stm32f103c8t6_code\freertos.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h
 stm32f103c8t6_code\freertos.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
@@ -46,3 +47,4 @@ stm32f103c8t6_code\freertos.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal
 stm32f103c8t6_code\freertos.o: D:\Keil C51\ARM\ARMCC\Bin\..\include\string.h
 stm32f103c8t6_code\freertos.o: D:\Keil C51\ARM\ARMCC\Bin\..\include\stdlib.h
 stm32f103c8t6_code\freertos.o: ../Inc/UserFunc.h
+stm32f103c8t6_code\freertos.o: ../Inc/iwdg.h

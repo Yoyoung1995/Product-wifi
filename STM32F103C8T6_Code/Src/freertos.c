@@ -57,6 +57,7 @@
 #include <stdlib.h>
 #include "UserFunc.h"
 #include "stm32f1xx_hal.h"
+#include "iwdg.h"
 /* USER CODE END Includes */
 
 /* Variables -----------------------------------------------------------------*/
@@ -377,6 +378,8 @@ void myTimer1s_Callback(void const * argument)
   /* USER CODE BEGIN myTimer1s_Callback */
   softTimerCount++;
 	osSemaphoreRelease(BinarySem_Task_ReportDataHandle);	//用信号量控制一秒仅进入那个函数一次
+	
+	HAL_IWDG_Refresh(&hiwdg);
   /* USER CODE END myTimer1s_Callback */
 }
 
