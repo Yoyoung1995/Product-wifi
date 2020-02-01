@@ -44,7 +44,7 @@ void Init_FirstTime(void)
 		//2.设置模块
 		snprintf((char *)UsartTx,sizeof(UsartTx),"AT+CWMODE=3\r\n" );
 		HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,strlen((char *)UsartTx) );	
-		osDelay(2500);
+		osDelay(2000);
 		snprintf((char *)UsartTx,sizeof(UsartTx),"AT+RST\r\n" );
 		HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,strlen((char *)UsartTx) );
 		osDelay(2000);		
@@ -71,7 +71,7 @@ void Init_FirstTime(void)
 		//7.设置服务器超时时间
 		snprintf((char *)UsartTx,sizeof(UsartTx),"AT+CIPSTO=3600\r\n" );
 		HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,strlen((char *)UsartTx) );	
-		osDelay(2000);		//延时未确定
+		osDelay(1000);		//延时未确定
 		//(初始化结束)  --- 测试通过标准，手机能搜到并连上wifi，能访问wifi服务器。 改名，再次测试
 		//测试通过，但需要几分钟后才能连上wifi
 }

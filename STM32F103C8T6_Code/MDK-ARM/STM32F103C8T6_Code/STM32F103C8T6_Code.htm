@@ -3,7 +3,7 @@
 <title>Static Call Graph - [STM32F103C8T6_Code\STM32F103C8T6_Code.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image STM32F103C8T6_Code\STM32F103C8T6_Code.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060422: Last Updated: Fri Jan 31 22:50:02 2020
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060422: Last Updated: Sat Feb 01 13:06:45 2020
 <BR><P>
 <H3>Maximum Stack Usage =        312 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -13,7 +13,6 @@ main &rArr; MX_FREERTOS_Init &rArr; osTimerStart &rArr; xTimerGenericCommand &rA
 Mutually Recursive functions
 </H3> <LI><a href="#[1c]">ADC1_2_IRQHandler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[1c]">ADC1_2_IRQHandler</a><BR>
  <LI><a href="#[4]">BusFault_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[4]">BusFault_Handler</a><BR>
- <LI><a href="#[46]">Func_NetworkLink</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[46]">Func_NetworkLink</a><BR>
  <LI><a href="#[2]">HardFault_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[2]">HardFault_Handler</a><BR>
  <LI><a href="#[3]">MemManage_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[3]">MemManage_Handler</a><BR>
  <LI><a href="#[5]">UsageFault_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[5]">UsageFault_Handler</a><BR>
@@ -447,14 +446,10 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[46]"></a>Func_NetworkLink</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, freertos.o(i.Func_NetworkLink))
-<BR><BR>[Stack]<UL><LI>Max Depth = 72 + In Cycle
-<LI>Call Chain = Func_NetworkLink &rArr;  Func_NetworkLink (Cycle)
+<P><STRONG><a name="[46]"></a>Func_NetworkLink</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, freertos.o(i.Func_NetworkLink))
+<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = Func_NetworkLink &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Func_NetworkLink
-<LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
-</UL>
-<BR>[Called By]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Func_NetworkLink
+<BR>[Calls]<UL><LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
@@ -469,7 +464,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[44]"></a>Func_ReportData</STRONG> (Thumb, 476 bytes, Stack size 24 bytes, freertos.o(i.Func_ReportData))
+<P><STRONG><a name="[44]"></a>Func_ReportData</STRONG> (Thumb, 496 bytes, Stack size 24 bytes, freertos.o(i.Func_ReportData))
 <BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = Func_ReportData &rArr; osSemaphoreWait &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osSemaphoreWait
@@ -1132,7 +1127,11 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> entry9a.o(.ARM.Collect$$$$0000000B)
 </UL>
-<P><STRONG><a name="[42]"></a>myTimer1s_Callback</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, freertos.o(i.myTimer1s_Callback))
+<P><STRONG><a name="[42]"></a>myTimer1s_Callback</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, freertos.o(i.myTimer1s_Callback))
+<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = myTimer1s_Callback &rArr; osSemaphoreRelease &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+</UL>
+<BR>[Calls]<UL><LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osSemaphoreRelease
+</UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
 <P><STRONG><a name="[53]"></a>osDelay</STRONG> (Thumb, 14 bytes, Stack size 8 bytes, cmsis_os.o(i.osDelay))
@@ -1178,6 +1177,7 @@ Global Symbols
 <LI><a href="#[cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;inHandlerMode
 </UL>
 <BR>[Called By]<UL><LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UsartReceive_IDLE
+<LI><a href="#[42]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;myTimer1s_Callback
 <LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Func_RXProductProtocolAnalyse
 </UL>
 

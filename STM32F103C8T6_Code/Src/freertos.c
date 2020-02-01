@@ -202,6 +202,8 @@ void Func_ReportData(void const * argument)
 	/* Infinite loop */
   for(;;)
   {
+		osSemaphoreWait(BinarySem_Task_ReportDataHandle,osWaitForever);	//控制1秒仅进入该任务一次
+		
 		//定期检测TCP远程服务器链接情况 
 		if( softTimerCount%(10*DeviceSet.T) == 0 )
 		{
@@ -233,32 +235,34 @@ void Func_ReportData(void const * argument)
 			{
 				snprintf((char *)UsartTx,sizeof(UsartTx),"AT+CIPSEND=2,%d\r\n",DDD_Len+4 );
 				HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,strlen((char *)UsartTx) );	
-				osDelay(700);	//延时多久未确定
+				osDelay(200);	
 				UsartTx[0] = 0xA5;
 				UsartTx[1] = 0x5A;
 				UsartTx[2] = DDD_Len+1;
 				UsartTx[3] = 0x02;
 				memcpy( &UsartTx[4],(uint8_t *)&SensorData,DDD_Len );
 				HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,DDD_Len+4 );	
+				osDelay(200);	//给wifi模块发送一点点时间
 				//远程服务器端接收到数据帧，解析, 再将该数据转换成DDD结构体，方可读出数据
 				;
 			}
 		}
 		
 		//定期上报Wifi设备配置信息  数据帧形式
-		if(  softTimerCount%(2*DeviceSet.T) == 0 )
+		if(  softTimerCount%(3*DeviceSet.T) == 0 )
 		{
 			if( DeviceSet.NetWork_Status == 1)		//网络连接正常
 			{
 				snprintf((char *)UsartTx,sizeof(UsartTx),"AT+CIPSEND=2,%d\r\n",SSS_Len+4 );
 				HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,strlen((char *)UsartTx) );	
-				osDelay(700);	//延时多久未确定
+				osDelay(200);	
 				UsartTx[0] = 0xA5;
 				UsartTx[1] = 0x5A;
 				UsartTx[2] = SSS_Len+1;
 				UsartTx[3] = 0x03;
 				memcpy( &UsartTx[4],(uint8_t *)&DeviceSet,SSS_Len );
 				HAL_UART_Transmit_DMA(&huart1,(uint8_t *)UsartTx,SSS_Len+4 );	
+				osDelay(200);	//给wifi模块发送一点点时间
 				//远程服务器端接收到数据帧，解析, 再将该数据转换成SSS结构体，方可读出数据
 				;
 			}
@@ -298,7 +302,7 @@ void Func_NetworkLink(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    osDelay(1000);
   }
   /* USER CODE END Func_NetworkLink */
 }
@@ -372,7 +376,7 @@ void myTimer1s_Callback(void const * argument)
 {
   /* USER CODE BEGIN myTimer1s_Callback */
   softTimerCount++;
-
+	osSemaphoreRelease(BinarySem_Task_ReportDataHandle);	//用信号量控制一秒仅进入那个函数一次
   /* USER CODE END myTimer1s_Callback */
 }
 
